@@ -6,6 +6,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/Layout/AppLayout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import VehiclesPage from './pages/Vehicles';
+import DriversPage from './pages/Drivers';
+import TripsPage from './pages/Trips';
+import ReportsPage from './pages/Reports';
 
 export default function App() {
     return (
@@ -24,7 +28,10 @@ export default function App() {
                         }
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
-                        {/* Phase 2+ pages will be added here */}
+                        <Route path="/vehicles" element={<VehiclesPage />} />
+                        <Route path="/drivers" element={<DriversPage />} />
+                        <Route path="/trips" element={<TripsPage />} />
+                        <Route path="/reports" element={<ReportsPage />} />
                     </Route>
 
                     {/* Redirects */}
