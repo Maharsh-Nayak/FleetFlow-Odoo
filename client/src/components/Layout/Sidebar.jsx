@@ -25,7 +25,7 @@ export default function Sidebar() {
     const { user, logout } = useAuth();
     const location = useLocation();
 
-    const visibleNavItems = NAV_ITEMS.filter(item => 
+    const visibleNavItems = NAV_ITEMS.filter(item =>
         user && item.roles.includes(user.role)
     );
 

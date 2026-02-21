@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import { 
+import {
     HiOutlineTruck, HiOutlineExclamation, HiOutlineTrendingUp, HiOutlineClipboardList,
     HiOutlineArrowRight, HiOutlineClock, HiOutlineCurrencyDollar, HiOutlineLocationMarker,
     HiOutlineSparkles
 } from 'react-icons/hi';
-import { 
+import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     PieChart, Pie, Cell
 } from 'recharts';
@@ -123,7 +123,7 @@ export default function Dashboard() {
     if (loading) return (
         <div className="page-container">
             <div className="page-header"><div><div className="skeleton" style={{ width: 200, height: 32, marginBottom: 8 }} /><div className="skeleton" style={{ width: 150, height: 16 }} /></div></div>
-            <div className="kpi-grid">{[1,2,3,4].map(i => <div key={i} className="skeleton" style={{ height: 160, borderRadius: 24 }} />)}</div>
+            <div className="kpi-grid">{[1, 2, 3, 4].map(i => <div key={i} className="skeleton" style={{ height: 160, borderRadius: 24 }} />)}</div>
         </div>
     );
 
@@ -154,10 +154,10 @@ export default function Dashboard() {
                             <AreaChart data={mockRevenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#d946a8" stopOpacity={0.3}/><stop offset="95%" stopColor="#d946a8" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#d946a8" stopOpacity={0.3} /><stop offset="95%" stopColor="#d946a8" stopOpacity={0} />
                                     </linearGradient>
                                     <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#4682b4" stopOpacity={0.3}/><stop offset="95%" stopColor="#4682b4" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#4682b4" stopOpacity={0.3} /><stop offset="95%" stopColor="#4682b4" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
@@ -224,7 +224,6 @@ export default function Dashboard() {
                             <div className="stat-card"><div className="stat-label">Total Vehicles</div><div className="stat-value" style={{ color: '#f472b6' }}>{kpis.totalVehicles}</div></div>
                             <div className="stat-card"><div className="stat-label">Available</div><div className="stat-value" style={{ color: '#10b981' }}>{kpis.availableVehicles}</div></div>
                             <div className="stat-card"><div className="stat-label">Total Expenses</div><div className="stat-value" style={{ color: '#f59e0b' }}>₹{kpis.totalExpenses?.toLocaleString()}</div></div>
-                            <div className="stat-card"><div className="stat-label">Fuel Consumed</div><div className="stat-value" style={{ color: '#4ba8f0' }}>{kpis.totalFuelConsumed?.toFixed(0) || 0}L</div></div>
                         </div>
                     </div>
                 </div>

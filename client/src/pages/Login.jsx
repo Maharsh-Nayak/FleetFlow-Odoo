@@ -159,8 +159,8 @@ export default function Login() {
 
                         {!isRegister && !showForgotPassword && (
                             <p style={{ textAlign: 'center', marginBottom: 12 }}>
-                                <a 
-                                    onClick={() => setShowForgotPassword(true)} 
+                                <a
+                                    onClick={() => setShowForgotPassword(true)}
                                     style={{ color: 'var(--primary-400)', cursor: 'pointer', fontSize: '0.9rem' }}
                                 >
                                     Forgot Password?
@@ -267,8 +267,8 @@ export default function Login() {
                                     />
                                 </div>
                                 {forgotMessage && (
-                                    <p style={{ 
-                                        marginBottom: 12, 
+                                    <p style={{
+                                        marginBottom: 12,
                                         color: forgotMessage.includes('sent') ? 'var(--success)' : 'var(--warning)',
                                         fontSize: '0.9rem'
                                     }}>
