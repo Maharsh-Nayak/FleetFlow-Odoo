@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import api from '../api/axios';
 import { HiOutlinePlus, HiOutlineSearch, HiOutlineTruck, HiOutlineSwitchHorizontal } from 'react-icons/hi';
 import FilterSortBar from '../components/FilterSortBar';
+import { useAuth } from '../context/AuthContext';
 
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
@@ -19,6 +20,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 };
 
 export default function VehiclesPage() {
+    const { user } = useAuth();
+    const isManager = user?.role === 'MANAGER';
     const [vehicles, setVehicles] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [search, setSearch] = useState('');
@@ -176,14 +179,16 @@ export default function VehiclesPage() {
             <td>{getStatusPill(vehicle.status)}</td>
             <td>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <button 
-                        className={`btn btn-sm ${vehicle.status === 'OUT_OF_SERVICE' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => toggleOutOfService(vehicle)}
-                        title={vehicle.status === 'OUT_OF_SERVICE' ? 'Put in service' : 'Take out of service'}
-                        disabled={vehicle.status === 'IN_TRANSIT' || vehicle.status === 'IN_MAINTENANCE'}
-                    >
-                        <HiOutlineSwitchHorizontal /> {vehicle.status === 'OUT_OF_SERVICE' ? 'Activate' : 'Out of Service'}
-                    </button>
+                    {isManager && (
+                        <button 
+                            className={`btn btn-sm ${vehicle.status === 'OUT_OF_SERVICE' ? 'btn-primary' : 'btn-secondary'}`}
+                            onClick={() => toggleOutOfService(vehicle)}
+                            title={vehicle.status === 'OUT_OF_SERVICE' ? 'Put in service' : 'Take out of service'}
+                            disabled={vehicle.status === 'IN_TRANSIT' || vehicle.status === 'IN_MAINTENANCE'}
+                        >
+                            <HiOutlineSwitchHorizontal /> {vehicle.status === 'OUT_OF_SERVICE' ? 'Activate' : 'Out of Service'}
+                        </button>
+                    )}
                 </div>
             </td>
         </tr>
@@ -198,7 +203,7 @@ export default function VehiclesPage() {
                     <h1 className="page-title">Vehicles</h1>
                     <p className="page-subtitle">{filtered.length} vehicles in your fleet</p>
                 </div>
-                <button onClick={() => setShowModal(true)} className="btn btn-primary">
+                <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ display: isManager ? 'inline-flex' : 'none' }}>
                     <HiOutlinePlus /> Add Vehicle
                 </button>
             </div>

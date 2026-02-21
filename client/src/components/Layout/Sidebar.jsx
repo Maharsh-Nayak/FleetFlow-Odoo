@@ -13,7 +13,7 @@ import {
 
 const NAV_ITEMS = [
     { label: 'Dashboard', path: '/dashboard', icon: <HiOutlineViewGrid />, roles: ['MANAGER', 'DISPATCHER', 'SAFETY', 'FINANCE'] },
-    { label: 'Vehicles', path: '/vehicles', icon: <HiOutlineTruck />, roles: ['MANAGER'] },
+    { label: 'Vehicles', path: '/vehicles', icon: <HiOutlineTruck />, roles: ['MANAGER', 'DISPATCHER'] },
     { label: 'Trips', path: '/trips', icon: <HiOutlineMap />, roles: ['DISPATCHER', 'SAFETY'] },
     { label: 'Maintenance', path: '/maintenance', icon: <HiOutlineCog />, roles: ['MANAGER'] },
     { label: 'Expenses', path: '/expenses', icon: <HiOutlineCash />, roles: ['FINANCE'] },

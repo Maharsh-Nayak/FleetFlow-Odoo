@@ -38,7 +38,7 @@ export default function App() {
                         }
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/vehicles" element={<RoleRoute element={<VehiclesPage />} roles={['MANAGER']} />} />
+                        <Route path="/vehicles" element={<RoleRoute element={<VehiclesPage />} roles={['MANAGER', 'DISPATCHER']} />} />
                         <Route path="/trips" element={<RoleRoute element={<TripsPage />} roles={['DISPATCHER', 'SAFETY']} />} />
                         <Route path="/maintenance" element={<RoleRoute element={<MaintenancePage />} roles={['MANAGER']} />} />
                         <Route path="/expenses" element={<RoleRoute element={<ExpensesPage />} roles={['FINANCE']} />} />
