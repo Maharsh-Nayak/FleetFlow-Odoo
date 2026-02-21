@@ -1,6 +1,5 @@
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { HiOutlineBell, HiOutlineSearch } from 'react-icons/hi';
 
 const PAGE_TITLES = {
     '/dashboard': 'Command Center',
@@ -20,14 +19,6 @@ export default function Topbar() {
     return (
         <header className="topbar">
             <h2 className="topbar-title">{pageTitle}</h2>
-            <div className="topbar-actions">
-                <button className="topbar-btn" title="Search">
-                    <HiOutlineSearch />
-                </button>
-                <button className="topbar-btn" title="Notifications">
-                    <HiOutlineBell />
-                </button>
-            </div>
         </header>
     );
 }
