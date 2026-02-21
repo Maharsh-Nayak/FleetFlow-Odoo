@@ -76,7 +76,7 @@ const createTrip = async (req, res) => {
             });
         }
 
-        // Validate driver license not expired
+        // Validate driver license not expired and category matches vehicle type
         const driver = await Driver.findByPk(driver_id);
         if (!driver) {
             return res.status(404).json({ message: 'Driver not found' });
@@ -86,6 +86,21 @@ const createTrip = async (req, res) => {
         const today = new Date();
         if (new Date(driver.license_expiry) < today) {
             return res.status(400).json({ message: 'Driver license expired' });
+        }
+
+        // Check if driver license category matches vehicle type
+        const licenseCategoryMap = {
+            'CAR': ['LMV', 'ALL'],
+            'VAN': ['LMV', 'ALL'],
+            'TRUCK': ['CMV', 'HCV', 'ALL'],
+            'TRAILER': ['HCV', 'ALL'],
+            'CONTAINER': ['HCV', 'ALL'],
+        };
+        const allowedCategories = licenseCategoryMap[vehicle.vehicle_type] || ['ALL'];
+        if (driver.license_category && driver.license_category !== 'ALL' && !allowedCategories.includes(driver.license_category)) {
+            return res.status(400).json({ 
+                message: `Driver license category (${driver.license_category}) not valid for vehicle type (${vehicle.vehicle_type}). Required: ${allowedCategories.join(', ')}` 
+            });
         }
 
         // Check if driver is available
@@ -174,6 +189,20 @@ const completeTrip = async (req, res) => {
         // Update driver status back to AVAILABLE
         await Driver.update({ status: 'AVAILABLE' }, { where: { id: trip.driver_id } });
 
+        // Auto-calculate safety score based on trip completion
+        const driver = await Driver.findByPk(trip.driver_id);
+        if (driver) {
+            const completedTrips = await Trip.count({ where: { driver_id: driver.id, status: 'COMPLETED' } });
+            const cancelledTrips = await Trip.count({ where: { driver_id: driver.id, status: 'CANCELLED' } });
+            const totalTrips = completedTrips + cancelledTrips + 1;
+            
+            // Safety score: Start at 100, reduce by 5 for each cancelled trip
+            let newSafetyScore = 100 - (cancelledTrips * 5);
+            newSafetyScore = Math.max(0, Math.min(100, newSafetyScore)); // Clamp between 0-100
+            
+            await Driver.update({ safety_score: newSafetyScore }, { where: { id: driver.id } });
+        }
+
         trip.status = 'COMPLETED';
         trip.end_odometer = end_odometer;
         trip.distance = distance;
@@ -205,6 +234,19 @@ const cancelTrip = async (req, res) => {
         if (trip.status === 'DISPATCHED') {
             await Vehicle.update({ status: 'AVAILABLE' }, { where: { id: trip.vehicle_id } });
             await Driver.update({ status: 'AVAILABLE' }, { where: { id: trip.driver_id } });
+        }
+
+        // Reduce safety score for cancelled trip
+        const driver = await Driver.findByPk(trip.driver_id);
+        if (driver) {
+            const cancelledTrips = await Trip.count({ where: { driver_id: driver.id, status: 'CANCELLED' } });
+            const completedTrips = await Trip.count({ where: { driver_id: driver.id, status: 'COMPLETED' } });
+            const totalTrips = completedTrips + cancelledTrips + 1;
+            
+            let newSafetyScore = 100 - ((cancelledTrips + 1) * 5);
+            newSafetyScore = Math.max(0, Math.min(100, newSafetyScore));
+            
+            await Driver.update({ safety_score: newSafetyScore }, { where: { id: driver.id } });
         }
 
         trip.status = 'CANCELLED';

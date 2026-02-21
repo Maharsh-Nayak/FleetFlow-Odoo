@@ -26,7 +26,7 @@ export default function VehiclesPage() {
     const [sortBy, setSortBy] = useState('default');
     const [groupBy, setGroupBy] = useState('none');
     const [formData, setFormData] = useState({
-        model: '', license_plate: '', vehicle_type: 'TRUCK', max_capacity_kg: '',
+        model: '', license_plate: '', vehicle_type: 'TRUCK', max_capacity_kg: '', region: '', acquisition_cost: ''
     });
     const [loading, setLoading] = useState(true);
 
@@ -120,7 +120,7 @@ export default function VehiclesPage() {
         e.preventDefault();
         try {
             await api.post('/vehicles', formData);
-            setFormData({ model: '', license_plate: '', vehicle_type: 'TRUCK', max_capacity_kg: '' });
+            setFormData({ model: '', license_plate: '', vehicle_type: 'TRUCK', max_capacity_kg: '', region: '', acquisition_cost: '' });
             setShowModal(false);
             fetchVehicles();
         } catch (error) {
@@ -291,6 +291,24 @@ export default function VehiclesPage() {
                             <label className="form-label">Max Capacity (kg)</label>
                             <input type="number" className="form-input" placeholder="e.g. 10000"
                                 value={formData.max_capacity_kg} onChange={e => setFormData({...formData, max_capacity_kg: e.target.value})} required />
+                        </div>
+                    </div>
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label className="form-label">Region</label>
+                            <select className="form-select" value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})}>
+                                <option value="">Select Region</option>
+                                <option value="North">North</option>
+                                <option value="South">South</option>
+                                <option value="East">East</option>
+                                <option value="West">West</option>
+                                <option value="Central">Central</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Acquisition Cost (₹)</label>
+                            <input type="number" className="form-input" placeholder="e.g. 500000"
+                                value={formData.acquisition_cost} onChange={e => setFormData({...formData, acquisition_cost: e.target.value})} />
                         </div>
                     </div>
                     <div className="modal-footer" style={{ padding: 0, border: 'none', marginTop: 20 }}>

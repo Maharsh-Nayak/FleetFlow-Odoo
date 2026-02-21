@@ -45,7 +45,7 @@ const getDriver = async (req, res) => {
 // POST /api/drivers
 const createDriver = async (req, res) => {
     try {
-        const { name, license_number, license_expiry, phone_number, safety_score = 100, hire_date } = req.body;
+        const { name, license_number, license_expiry, phone_number, safety_score = 100, hire_date, license_category } = req.body;
 
         if (!name || !license_number || !license_expiry) {
             return res.status(400).json({ message: 'Missing required fields' });
@@ -58,6 +58,7 @@ const createDriver = async (req, res) => {
             phone_number,
             safety_score,
             hire_date: hire_date || new Date(),
+            license_category,
         });
 
         res.status(201).json(driver);
@@ -73,7 +74,7 @@ const createDriver = async (req, res) => {
 // PUT /api/drivers/:id
 const updateDriver = async (req, res) => {
     try {
-        const { safety_score, status } = req.body;
+        const { safety_score, status, license_category, license_expiry } = req.body;
         const driver = await Driver.findByPk(req.params.id);
 
         if (!driver) {
@@ -87,6 +88,8 @@ const updateDriver = async (req, res) => {
             driver.safety_score = safety_score;
         }
         if (status) driver.status = status;
+        if (license_category !== undefined) driver.license_category = license_category;
+        if (license_expiry !== undefined) driver.license_expiry = license_expiry;
 
         await driver.save();
         res.json(driver);

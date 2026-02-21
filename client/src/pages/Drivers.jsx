@@ -25,7 +25,7 @@ export default function DriversPage() {
     const [filters, setFilters] = useState({});
     const [sortBy, setSortBy] = useState('default');
     const [groupBy, setGroupBy] = useState('none');
-    const [formData, setFormData] = useState({ name: '', license_number: '', license_expiry: '', phone_number: '' });
+    const [formData, setFormData] = useState({ name: '', license_number: '', license_expiry: '', phone_number: '', license_category: 'ALL' });
     const [loading, setLoading] = useState(true);
 
     const DRIVER_FILTERS = [
@@ -103,7 +103,7 @@ export default function DriversPage() {
         e.preventDefault();
         try {
             await api.post('/drivers', formData);
-            setFormData({ name: '', license_number: '', license_expiry: '', phone_number: '' });
+            setFormData({ name: '', license_number: '', license_expiry: '', phone_number: '', license_category: 'ALL' });
             setShowModal(false);
             fetchDrivers();
         } catch (error) {
@@ -246,6 +246,17 @@ export default function DriversPage() {
                             <label className="form-label">Phone Number</label>
                             <input type="tel" className="form-input" placeholder="+1 234 567 8900"
                                 value={formData.phone_number} onChange={e => setFormData({...formData, phone_number: e.target.value})} />
+                        </div>
+                    </div>
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label className="form-label">License Category</label>
+                            <select className="form-select" value={formData.license_category} onChange={e => setFormData({...formData, license_category: e.target.value})}>
+                                <option value="LMV">LMV (Light Motor Vehicle)</option>
+                                <option value="CMV">CMV (Commercial Motor Vehicle)</option>
+                                <option value="HCV">HCV (Heavy Commercial Vehicle)</option>
+                                <option value="ALL">ALL (All Categories)</option>
+                            </select>
                         </div>
                     </div>
                     <div className="modal-footer" style={{ padding: 0, border: 'none', marginTop: 20 }}>

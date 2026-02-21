@@ -20,6 +20,10 @@ const Driver = sequelize.define('Driver', {
         type: DataTypes.DATEONLY,
         allowNull: false,
     },
+    license_category: {
+        type: DataTypes.ENUM('LMV', 'CMV', 'HCV', 'ALL'),
+        defaultValue: 'ALL',
+    },
     phone_number: {
         type: DataTypes.STRING(20),
     },

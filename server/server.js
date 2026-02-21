@@ -47,23 +47,31 @@ app.get('/api/health', (req, res) => {
 // Dashboard KPIs
 app.get('/api/dashboard/kpis', require('./middleware/auth'), async (req, res) => {
     try {
-        const totalVehicles = await Vehicle.count();
+        const totalVehicles = await Vehicle.count({ where: { status: { [require('sequelize').Op.ne]: 'OUT_OF_SERVICE' } } });
         const availableVehicles = await Vehicle.count({ where: { status: 'AVAILABLE' } });
-        const inTransitVehicles = await Vehicle.count({ where: { status: 'IN_TRANSIT' } });
+        const inTransitVehicles = await Vehicle.count({ where: { status: { [require('sequelize').Op.in]: ['IN_TRANSIT', 'DISPATCHED'] } } });
+        const maintenanceVehicles = await Vehicle.count({ where: { status: 'IN_MAINTENANCE' } });
         const completedTrips = await Trip.count({ where: { status: 'COMPLETED' } });
+        const pendingTrips = await Trip.count({ where: { status: { [require('sequelize').Op.in]: ['DRAFT', 'DISPATCHED'] } } });
 
         const { Sequelize } = require('sequelize');
         const expenses = await Expense.sum('amount') || 0;
         const fuelLogs = await FuelLog.sum('liters') || 0;
 
+        // Utilization Rate = (in_transit / total_available) * 100
+        const activeFleet = inTransitVehicles;
+        const utilizationRate = totalVehicles > 0 ? ((activeFleet / totalVehicles) * 100).toFixed(2) : 0;
+
         res.json({
             totalVehicles,
             availableVehicles,
             inTransitVehicles,
+            maintenanceVehicles,
             completedTrips,
+            pendingTrips,
             totalExpenses: expenses,
             totalFuelConsumed: fuelLogs,
-            utilizationRate: totalVehicles > 0 ? ((inTransitVehicles / totalVehicles) * 100).toFixed(2) : 0,
+            utilizationRate,
         });
     } catch (error) {
         console.error('Dashboard KPIs error:', error);

@@ -21,8 +21,8 @@ export function AuthProvider({ children }) {
         setLoading(false);
     }, []);
 
-    const login = async (email, password) => {
-        const res = await api.post('/auth/login', { email, password });
+    const login = async (email, password, role) => {
+        const res = await api.post('/auth/login', { email, password, role });
         const { token, user: userData } = res.data;
         localStorage.setItem('fleetflow_token', token);
         localStorage.setItem('fleetflow_user', JSON.stringify(userData));

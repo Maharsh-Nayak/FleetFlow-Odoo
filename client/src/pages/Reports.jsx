@@ -150,17 +150,26 @@ export default function ReportsPage() {
             const vehicleMaint = maintenance.filter(m => m.vehicle_id === v.id);
 
             const revenue = vehicleTrips.filter(t => t.status === 'COMPLETED').reduce((sum, t) => sum + parseFloat(t.revenue || 0), 0);
-            const costs = [
-                ...vehicleExpenses.map(e => parseFloat(e.amount || 0)),
-                ...vehicleMaint.map(m => parseFloat(m.cost || 0))
-            ].reduce((a, b) => a + b, 0);
+            const fuelCosts = vehicleExpenses.filter(e => e.description?.toLowerCase().includes('fuel')).reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+            const otherCosts = vehicleExpenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+            const maintCosts = vehicleMaint.reduce((sum, m) => sum + parseFloat(m.cost || 0), 0);
+            
+            const totalCosts = otherCosts + maintCosts;
+            const profit = revenue - totalCosts;
+            const acquisitionCost = parseFloat(v.acquisition_cost) || 0;
+            
+            // ROI = (Revenue - (Maintenance + Fuel)) / Acquisition Cost * 100
+            const roi = acquisitionCost > 0 ? ((revenue - (maintCosts + fuelCosts)) / acquisitionCost * 100).toFixed(2) : 0;
 
             return {
                 ...v,
                 totalTrips: vehicleTrips.length,
                 revenue,
-                costs,
-                profit: revenue - costs,
+                fuelCosts,
+                totalCosts,
+                profit,
+                acquisitionCost,
+                roi,
             };
         }).sort((a, b) => b.profit - a.profit);
     };

@@ -35,6 +35,9 @@ const Vehicle = sequelize.define('Vehicle', {
         type: DataTypes.ENUM('AVAILABLE', 'IN_TRANSIT', 'IN_MAINTENANCE', 'INACTIVE', 'OUT_OF_SERVICE'),
         defaultValue: 'AVAILABLE',
     },
+    region: {
+        type: DataTypes.STRING(50),
+    },
 }, {
     tableName: 'vehicles',
     timestamps: true,

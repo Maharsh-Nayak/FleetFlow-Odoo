@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 import {
     HiOutlineTruck,
     HiOutlineMap,
@@ -17,6 +18,10 @@ const ROLES = [
 
 export default function Login() {
     const [isRegister, setIsRegister] = useState(false);
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [forgotEmail, setForgotEmail] = useState('');
+    const [forgotMessage, setForgotMessage] = useState('');
+    const [forgotLoading, setForgotLoading] = useState(false);
     const [form, setForm] = useState({ name: '', email: '', password: '', role: 'DISPATCHER' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -26,6 +31,20 @@ export default function Login() {
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
         if (error) setError('');
+    };
+
+    const handleForgotPassword = async (e) => {
+        e.preventDefault();
+        setForgotLoading(true);
+        setForgotMessage('');
+        try {
+            await api.post('/auth/forgot-password', { email: forgotEmail });
+            setForgotMessage('If an account exists, a reset link has been sent to your email.');
+        } catch (err) {
+            setForgotMessage('If an account exists, a reset link has been sent to your email.');
+        } finally {
+            setForgotLoading(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -42,7 +61,7 @@ export default function Login() {
                 }
                 await register(form.name, form.email, form.password, form.role);
             } else {
-                await login(form.email, form.password);
+                await login(form.email, form.password, form.role);
             }
             navigate('/dashboard');
         } catch (err) {
@@ -114,29 +133,40 @@ export default function Login() {
                             />
                         </div>
 
-                        {isRegister && (
-                            <div className="form-group">
-                                <label className="form-label" htmlFor="role">Select Your Role</label>
-                                <select
-                                    id="role"
-                                    name="role"
-                                    className="form-select"
-                                    value={form.role}
-                                    onChange={handleChange}
-                                >
-                                    {ROLES.map((r) => (
-                                        <option key={r.value} value={r.value}>
-                                            {r.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '6px' }}>
-                                    {ROLES.find(r => r.value === form.role)?.desc}
-                                </p>
-                            </div>
-                        )}
+                        <div className="form-group">
+                            <label className="form-label" htmlFor="role">
+                                {isRegister ? 'Select Your Role' : 'Select Your Role'}
+                            </label>
+                            <select
+                                id="role"
+                                name="role"
+                                className="form-select"
+                                value={form.role}
+                                onChange={handleChange}
+                            >
+                                {ROLES.map((r) => (
+                                    <option key={r.value} value={r.value}>
+                                        {r.label}
+                                    </option>
+                                ))}
+                            </select>
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '6px' }}>
+                                {ROLES.find(r => r.value === form.role)?.desc}
+                            </p>
+                        </div>
 
                         {error && <p className="form-error" style={{ marginBottom: 12 }}>{error}</p>}
+
+                        {!isRegister && !showForgotPassword && (
+                            <p style={{ textAlign: 'center', marginBottom: 12 }}>
+                                <a 
+                                    onClick={() => setShowForgotPassword(true)} 
+                                    style={{ color: 'var(--primary-400)', cursor: 'pointer', fontSize: '0.9rem' }}
+                                >
+                                    Forgot Password?
+                                </a>
+                            </p>
+                        )}
 
                         <button
                             type="submit"
@@ -211,6 +241,48 @@ export default function Login() {
                     </div>
                 </div>
             </div>
+
+            {/* Forgot Password Modal */}
+            {showForgotPassword && (
+                <div className="modal-overlay" onClick={() => setShowForgotPassword(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: 400 }}>
+                        <div className="modal-header">
+                            <h3 className="modal-title">Reset Password</h3>
+                            <button className="modal-close" onClick={() => setShowForgotPassword(false)}>✕</button>
+                        </div>
+                        <div className="modal-body">
+                            <p style={{ marginBottom: 16, color: 'var(--text-secondary)' }}>
+                                Enter your email address and we'll send you a link to reset your password.
+                            </p>
+                            <form onSubmit={handleForgotPassword}>
+                                <div className="form-group">
+                                    <label className="form-label">Email Address</label>
+                                    <input
+                                        type="email"
+                                        className="form-input"
+                                        placeholder="you@company.com"
+                                        value={forgotEmail}
+                                        onChange={(e) => setForgotEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                {forgotMessage && (
+                                    <p style={{ 
+                                        marginBottom: 12, 
+                                        color: forgotMessage.includes('sent') ? 'var(--success)' : 'var(--warning)',
+                                        fontSize: '0.9rem'
+                                    }}>
+                                        {forgotMessage}
+                                    </p>
+                                )}
+                                <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={forgotLoading}>
+                                    {forgotLoading ? 'Sending...' : 'Send Reset Link'}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
