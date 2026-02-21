@@ -12,13 +12,13 @@ import {
 } from 'react-icons/hi';
 
 const NAV_ITEMS = [
-    { label: 'Dashboard', path: '/dashboard', icon: <HiOutlineViewGrid />, roles: null },
-    { label: 'Vehicles', path: '/vehicles', icon: <HiOutlineTruck />, roles: null },
-    { label: 'Trips', path: '/trips', icon: <HiOutlineMap />, roles: null },
-    { label: 'Maintenance', path: '/maintenance', icon: <HiOutlineCog />, roles: null },
-    { label: 'Expenses', path: '/expenses', icon: <HiOutlineCash />, roles: null },
-    { label: 'Drivers', path: '/drivers', icon: <HiOutlineUsers />, roles: null },
-    { label: 'Analytics', path: '/analytics', icon: <HiOutlineChartBar />, roles: null },
+    { label: 'Dashboard', path: '/dashboard', icon: <HiOutlineViewGrid /> },
+    { label: 'Vehicles', path: '/vehicles', icon: <HiOutlineTruck /> },
+    { label: 'Trips', path: '/trips', icon: <HiOutlineMap /> },
+    { label: 'Maintenance', path: '/maintenance', icon: <HiOutlineCog /> },
+    { label: 'Expenses', path: '/expenses', icon: <HiOutlineCash /> },
+    { label: 'Drivers', path: '/drivers', icon: <HiOutlineUsers /> },
+    { label: 'Reports', path: '/reports', icon: <HiOutlineChartBar /> },
 ];
 
 export default function Sidebar() {
@@ -41,9 +41,7 @@ export default function Sidebar() {
             </div>
 
             <nav className="sidebar-nav">
-                <div className="sidebar-section-label">Navigation</div>
                 {NAV_ITEMS.map((item) => {
-                    if (item.roles && !item.roles.includes(user?.role)) return null;
                     return (
                         <NavLink
                             key={item.path}

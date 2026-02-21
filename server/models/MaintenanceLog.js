@@ -16,7 +16,7 @@ const MaintenanceLog = sequelize.define('MaintenanceLog', {
         },
     },
     maintenance_type: {
-        type: DataTypes.ENUM('OIL_CHANGE', 'TIRE_REPLACEMENT', 'BRAKE_SERVICE', 'ENGINE_REPAIR', 'INSPECTION', 'OTHER'),
+        type: DataTypes.ENUM('OIL_CHANGE', 'TIRE_ROTATION', 'TIRE_REPLACEMENT', 'BRAKE_SERVICE', 'ENGINE_REPAIR', 'INSPECTION', 'OTHER'),
         allowNull: false,
     },
     maintenance_date: {

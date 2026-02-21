@@ -69,16 +69,32 @@ const createTrip = async (req, res) => {
             return res.status(400).json({ message: 'Vehicle not available' });
         }
 
+        // Validate cargo weight against vehicle capacity
+        if (cargo_weight_kg && vehicle.max_capacity_kg && parseFloat(cargo_weight_kg) > parseFloat(vehicle.max_capacity_kg)) {
+            return res.status(400).json({ 
+                message: `Cargo weight (${cargo_weight_kg}kg) exceeds vehicle capacity (${vehicle.max_capacity_kg}kg)` 
+            });
+        }
+
         // Validate driver license not expired
         const driver = await Driver.findByPk(driver_id);
         if (!driver) {
             return res.status(404).json({ message: 'Driver not found' });
         }
 
+        // Check if driver license is expired
         const today = new Date();
         if (new Date(driver.license_expiry) < today) {
             return res.status(400).json({ message: 'Driver license expired' });
         }
+
+        // Check if driver is available
+        if (driver.status !== 'AVAILABLE') {
+            return res.status(400).json({ message: `Driver is not available (status: ${driver.status})` });
+        }
+
+        // Update driver status to ON_DUTY
+        await Driver.update({ status: 'ON_DUTY' }, { where: { id: driver_id } });
 
         const trip = await Trip.create({
             vehicle_id,
@@ -111,9 +127,11 @@ const dispatchTrip = async (req, res) => {
             return res.status(400).json({ message: 'Trip cannot be dispatched' });
         }
 
-        // Update vehicle status
+        // Update vehicle status to IN_TRANSIT
         await Vehicle.update({ status: 'IN_TRANSIT' }, { where: { id: trip.vehicle_id } });
 
+        // Update driver status to ON_DUTY (already set when trip created)
+        
         trip.status = 'DISPATCHED';
         await trip.save();
 
@@ -153,6 +171,9 @@ const completeTrip = async (req, res) => {
             { where: { id: trip.vehicle_id } }
         );
 
+        // Update driver status back to AVAILABLE
+        await Driver.update({ status: 'AVAILABLE' }, { where: { id: trip.driver_id } });
+
         trip.status = 'COMPLETED';
         trip.end_odometer = end_odometer;
         trip.distance = distance;
@@ -180,9 +201,10 @@ const cancelTrip = async (req, res) => {
             return res.status(400).json({ message: 'Trip cannot be cancelled' });
         }
 
-        // Reset vehicle status if it was in transit
+        // Reset vehicle and driver status if trip was dispatched
         if (trip.status === 'DISPATCHED') {
             await Vehicle.update({ status: 'AVAILABLE' }, { where: { id: trip.vehicle_id } });
+            await Driver.update({ status: 'AVAILABLE' }, { where: { id: trip.driver_id } });
         }
 
         trip.status = 'CANCELLED';

@@ -36,8 +36,8 @@ const Driver = sequelize.define('Driver', {
         allowNull: false,
     },
     status: {
-        type: DataTypes.ENUM('ACTIVE', 'SUSPENDED', 'INACTIVE'),
-        defaultValue: 'ACTIVE',
+        type: DataTypes.ENUM('AVAILABLE', 'ON_DUTY', 'OFF_DUTY', 'SUSPENDED'),
+        defaultValue: 'AVAILABLE',
     },
 }, {
     tableName: 'drivers',

@@ -32,7 +32,7 @@ const Vehicle = sequelize.define('Vehicle', {
         defaultValue: 0,
     },
     status: {
-        type: DataTypes.ENUM('AVAILABLE', 'IN_TRANSIT', 'IN_MAINTENANCE', 'INACTIVE'),
+        type: DataTypes.ENUM('AVAILABLE', 'IN_TRANSIT', 'IN_MAINTENANCE', 'INACTIVE', 'OUT_OF_SERVICE'),
         defaultValue: 'AVAILABLE',
     },
 }, {

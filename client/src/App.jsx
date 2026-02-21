@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard';
 import VehiclesPage from './pages/Vehicles';
 import DriversPage from './pages/Drivers';
 import TripsPage from './pages/Trips';
+import MaintenancePage from './pages/Maintenance';
+import ExpensesPage from './pages/Expenses';
 import ReportsPage from './pages/Reports';
 
 export default function App() {
@@ -29,8 +31,10 @@ export default function App() {
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/vehicles" element={<VehiclesPage />} />
-                        <Route path="/drivers" element={<DriversPage />} />
                         <Route path="/trips" element={<TripsPage />} />
+                        <Route path="/maintenance" element={<MaintenancePage />} />
+                        <Route path="/expenses" element={<ExpensesPage />} />
+                        <Route path="/drivers" element={<DriversPage />} />
                         <Route path="/reports" element={<ReportsPage />} />
                     </Route>
 
