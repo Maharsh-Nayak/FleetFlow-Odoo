@@ -13,6 +13,14 @@ import MaintenancePage from './pages/Maintenance';
 import ExpensesPage from './pages/Expenses';
 import ReportsPage from './pages/Reports';
 
+function RoleRoute({ element, roles }) {
+    return (
+        <ProtectedRoute roles={roles}>
+            {element}
+        </ProtectedRoute>
+    );
+}
+
 export default function App() {
     return (
         <AuthProvider>
@@ -21,7 +29,7 @@ export default function App() {
                     {/* Public */}
                     <Route path="/login" element={<Login />} />
 
-                    {/* Protected — App Layout */}
+                    {/* Protected Routes with AppLayout */}
                     <Route
                         element={
                             <ProtectedRoute>
@@ -30,12 +38,12 @@ export default function App() {
                         }
                     >
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/vehicles" element={<VehiclesPage />} />
-                        <Route path="/trips" element={<TripsPage />} />
-                        <Route path="/maintenance" element={<MaintenancePage />} />
-                        <Route path="/expenses" element={<ExpensesPage />} />
-                        <Route path="/drivers" element={<DriversPage />} />
-                        <Route path="/reports" element={<ReportsPage />} />
+                        <Route path="/vehicles" element={<RoleRoute element={<VehiclesPage />} roles={['MANAGER']} />} />
+                        <Route path="/trips" element={<RoleRoute element={<TripsPage />} roles={['DISPATCHER', 'SAFETY']} />} />
+                        <Route path="/maintenance" element={<RoleRoute element={<MaintenancePage />} roles={['MANAGER']} />} />
+                        <Route path="/expenses" element={<RoleRoute element={<ExpensesPage />} roles={['FINANCE']} />} />
+                        <Route path="/drivers" element={<RoleRoute element={<DriversPage />} roles={['DISPATCHER', 'SAFETY']} />} />
+                        <Route path="/reports" element={<RoleRoute element={<ReportsPage />} roles={['MANAGER', 'FINANCE']} />} />
                     </Route>
 
                     {/* Redirects */}

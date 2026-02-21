@@ -12,24 +12,34 @@ import {
 } from 'react-icons/hi';
 
 const NAV_ITEMS = [
-    { label: 'Dashboard', path: '/dashboard', icon: <HiOutlineViewGrid /> },
-    { label: 'Vehicles', path: '/vehicles', icon: <HiOutlineTruck /> },
-    { label: 'Trips', path: '/trips', icon: <HiOutlineMap /> },
-    { label: 'Maintenance', path: '/maintenance', icon: <HiOutlineCog /> },
-    { label: 'Expenses', path: '/expenses', icon: <HiOutlineCash /> },
-    { label: 'Drivers', path: '/drivers', icon: <HiOutlineUsers /> },
-    { label: 'Reports', path: '/reports', icon: <HiOutlineChartBar /> },
+    { label: 'Dashboard', path: '/dashboard', icon: <HiOutlineViewGrid />, roles: ['MANAGER', 'DISPATCHER', 'SAFETY', 'FINANCE'] },
+    { label: 'Vehicles', path: '/vehicles', icon: <HiOutlineTruck />, roles: ['MANAGER'] },
+    { label: 'Trips', path: '/trips', icon: <HiOutlineMap />, roles: ['DISPATCHER', 'SAFETY'] },
+    { label: 'Maintenance', path: '/maintenance', icon: <HiOutlineCog />, roles: ['MANAGER'] },
+    { label: 'Expenses', path: '/expenses', icon: <HiOutlineCash />, roles: ['FINANCE'] },
+    { label: 'Drivers', path: '/drivers', icon: <HiOutlineUsers />, roles: ['DISPATCHER', 'SAFETY'] },
+    { label: 'Reports', path: '/reports', icon: <HiOutlineChartBar />, roles: ['MANAGER', 'FINANCE'] },
 ];
 
 export default function Sidebar() {
     const { user, logout } = useAuth();
     const location = useLocation();
 
+    const visibleNavItems = NAV_ITEMS.filter(item => 
+        user && item.roles.includes(user.role)
+    );
+
     const initials = user?.name
         ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
         : '??';
 
-    const roleLabel = user?.role?.replace('_', ' ') || 'User';
+    const roleLabels = {
+        MANAGER: 'Fleet Manager',
+        DISPATCHER: 'Dispatcher',
+        SAFETY: 'Safety Officer',
+        FINANCE: 'Financial Analyst',
+    };
+    const roleLabel = roleLabels[user?.role] || 'User';
 
     return (
         <aside className="sidebar">
@@ -41,7 +51,7 @@ export default function Sidebar() {
             </div>
 
             <nav className="sidebar-nav">
-                {NAV_ITEMS.map((item) => {
+                {visibleNavItems.map((item) => {
                     return (
                         <NavLink
                             key={item.path}

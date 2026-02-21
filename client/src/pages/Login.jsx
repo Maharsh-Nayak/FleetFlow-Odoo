@@ -9,10 +9,10 @@ import {
 } from 'react-icons/hi';
 
 const ROLES = [
-    { value: 'MANAGER', label: 'Manager' },
-    { value: 'DISPATCHER', label: 'Dispatcher' },
-    { value: 'SAFETY', label: 'Safety' },
-    { value: 'FINANCE', label: 'Finance' },
+    { value: 'MANAGER', label: 'Fleet Manager', desc: 'Oversee vehicle health, asset lifecycle, and scheduling' },
+    { value: 'DISPATCHER', label: 'Dispatcher', desc: 'Create trips, assign drivers, and validate cargo loads' },
+    { value: 'SAFETY', label: 'Safety Officer', desc: 'Monitor driver compliance, license expirations, and safety scores' },
+    { value: 'FINANCE', label: 'Financial Analyst', desc: 'Audit fuel spend, maintenance ROI, and operational costs' },
 ];
 
 export default function Login() {
@@ -125,9 +125,14 @@ export default function Login() {
                                     onChange={handleChange}
                                 >
                                     {ROLES.map((r) => (
-                                        <option key={r.value} value={r.value}>{r.label}</option>
+                                        <option key={r.value} value={r.value}>
+                                            {r.label}
+                                        </option>
                                     ))}
                                 </select>
+                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '6px' }}>
+                                    {ROLES.find(r => r.value === form.role)?.desc}
+                                </p>
                             </div>
                         )}
 
